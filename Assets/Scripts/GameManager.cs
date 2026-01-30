@@ -29,6 +29,17 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        if (borderBlockPrefab == null)
+        {
+            Debug.LogError("Border Block Prefab is not assigned in the GameManager inspector!");
+            return; // Stop execution to prevent further errors
+        }
+        if (tetrominoPrefabs == null || tetrominoPrefabs.Length == 0)
+        {
+            Debug.LogError("Tetromino Prefabs are not assigned in the GameManager inspector!");
+            return; // Stop execution to prevent further errors
+        }
+
         Camera.main.backgroundColor = Color.black;
         gameState = GameState.MainMenu;
         ShowMainMenu();
