@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro; // Import TextMeshPro
 
 public class GameManager : MonoBehaviour
 {
@@ -16,10 +17,10 @@ public class GameManager : MonoBehaviour
     public static Transform[,] grid = new Transform[width, height];
 
     public GameObject[] tetrominoPrefabs;
-    public GameObject borderBlockPrefab; // Variable for the border block
+    public GameObject borderBlockPrefab; 
 
     private int score = 0;
-    private TextMesh scoreTextMesh;
+    private TextMeshPro scoreTextMesh; // Changed to TextMeshPro
     private GameObject mainMenuHolder;
     private GameObject nextQueueHolder;
     private Queue<GameObject> tetrominoQueue = new Queue<GameObject>();
@@ -32,12 +33,12 @@ public class GameManager : MonoBehaviour
         if (borderBlockPrefab == null)
         {
             Debug.LogError("Border Block Prefab is not assigned in the GameManager inspector!");
-            return; // Stop execution to prevent further errors
+            return;
         }
         if (tetrominoPrefabs == null || tetrominoPrefabs.Length == 0)
         {
             Debug.LogError("Tetromino Prefabs are not assigned in the GameManager inspector!");
-            return; // Stop execution to prevent further errors
+            return;
         }
 
         Camera.main.backgroundColor = Color.black;
@@ -49,53 +50,58 @@ public class GameManager : MonoBehaviour
     {
         mainMenuHolder = new GameObject("MainMenu");
 
+        // --- Font Asset Loading ---
+        // TextMeshPro requires a Font Asset. We'll try to load a default one.
+        // If you create your own Font Asset, you should load it here.
+        // Example: TMP_FontAsset fontAsset = Resources.Load<TMP_FontAsset>("Fonts/MyCustomFont SDF");
+        TMP_FontAsset fontAsset = Resources.Load<TMP_FontAsset>("Fonts & Materials/LiberationSans SDF");
+
         // Title
         GameObject titleGo = new GameObject("Title");
         titleGo.transform.SetParent(mainMenuHolder.transform);
         titleGo.transform.position = new Vector3(width / 2, height / 2 + 4, 0);
-        TextMesh titleTm = titleGo.AddComponent<TextMesh>();
+        TextMeshPro titleTm = titleGo.AddComponent<TextMeshPro>(); // Use TextMeshPro
+        titleTm.font = fontAsset; // Assign the font asset
         titleTm.text = "Tetris84";
-        titleTm.fontSize = 400; // Increased font size for clarity
-        titleTm.characterSize = 0.1f; // Use characterSize to scale
-        titleTm.anchor = TextAnchor.MiddleCenter;
-        titleTm.alignment = TextAlignment.Center;
+        titleTm.fontSize = 10; // TMP uses a different scaling. Start with a reasonable size.
+        titleTm.alignment = TextAlignmentOptions.Center; // Use TMP alignment
         titleTm.color = Color.white;
+        titleTm.GetComponent<RectTransform>().sizeDelta = new Vector2(10, 2); // Set rect size
 
         // Easy Button
         GameObject easyButtonGo = new GameObject("EasyButton");
         easyButtonGo.transform.SetParent(mainMenuHolder.transform);
         easyButtonGo.transform.position = new Vector3(width / 2, height / 2, 0);
-        TextMesh easyButtonTm = easyButtonGo.AddComponent<TextMesh>();
+        TextMeshPro easyButtonTm = easyButtonGo.AddComponent<TextMeshPro>(); // Use TextMeshPro
+        easyButtonTm.font = fontAsset; // Assign the font asset
         easyButtonTm.text = "EASY";
-        easyButtonTm.fontSize = 300; // Increased font size for clarity
-        easyButtonTm.characterSize = 0.1f; // Use characterSize to scale
-        easyButtonTm.anchor = TextAnchor.MiddleCenter;
-        easyButtonTm.alignment = TextAlignment.Center;
+        easyButtonTm.fontSize = 8;
+        easyButtonTm.alignment = TextAlignmentOptions.Center; // Use TMP alignment
         easyButtonTm.color = Color.cyan;
+        easyButtonTm.GetComponent<RectTransform>().sizeDelta = new Vector2(7, 2); // Set rect size
         BoxCollider easyBc = easyButtonGo.AddComponent<BoxCollider>();
-        easyBc.size = new Vector3(7, 2, 1); // Reverted to original size
+        easyBc.size = new Vector3(7, 2, 1);
 
         // Hard Button
         GameObject hardButtonGo = new GameObject("HardButton");
         hardButtonGo.transform.SetParent(mainMenuHolder.transform);
         hardButtonGo.transform.position = new Vector3(width / 2, height / 2 - 3, 0);
-        TextMesh hardButtonTm = hardButtonGo.AddComponent<TextMesh>();
+        TextMeshPro hardButtonTm = hardButtonGo.AddComponent<TextMeshPro>(); // Use TextMeshPro
+        hardButtonTm.font = fontAsset; // Assign the font asset
         hardButtonTm.text = "HARD";
-        hardButtonTm.fontSize = 300; // Increased font size for clarity
-        hardButtonTm.characterSize = 0.1f; // Use characterSize to scale
-        hardButtonTm.anchor = TextAnchor.MiddleCenter;
-        hardButtonTm.alignment = TextAlignment.Center;
+        hardButtonTm.fontSize = 8;
+        hardButtonTm.alignment = TextAlignmentOptions.Center; // Use TMP alignment
         hardButtonTm.color = Color.red;
+        hardButtonTm.GetComponent<RectTransform>().sizeDelta = new Vector2(7, 2); // Set rect size
         BoxCollider hardBc = hardButtonGo.AddComponent<BoxCollider>();
-        hardBc.size = new Vector3(7, 2, 1); // Reverted to original size
+        hardBc.size = new Vector3(7, 2, 1);
     }
 
     void StartGame(GameDifficulty difficulty)
     {
         selectedDifficulty = difficulty;
-        Camera.main.backgroundColor = new Color(0.1f, 0.1f, 0.2f, 1f); // Set game background color
+        Camera.main.backgroundColor = new Color(0.1f, 0.1f, 0.2f, 1f);
 
-        // Clear the grid and destroy old blocks
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
@@ -108,14 +114,11 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        // Destroy old game elements if they exist
         GameObject oldBorder = GameObject.Find("Border");
         if (oldBorder) Destroy(oldBorder);
         GameObject oldScore = GameObject.Find("ScoreText");
         if (oldScore) Destroy(oldScore);
         if (nextQueueHolder) Destroy(nextQueueHolder);
-        
-        // Destroy game over screen elements if they exist
         GameObject oldGameOverShadow = GameObject.Find("GameOverText_Shadow");
         if (oldGameOverShadow) Destroy(oldGameOverShadow);
         GameObject oldGameOverFG = GameObject.Find("GameOverText_FG");
@@ -123,30 +126,29 @@ public class GameManager : MonoBehaviour
         GameObject oldRestartButton = GameObject.Find("RestartButton");
         if (oldRestartButton) Destroy(oldRestartButton);
 
-
-        // Draw new game elements
         DrawBorder();
+        
+        // --- Font Asset Loading --- (Can be done once in Start)
+        TMP_FontAsset fontAsset = Resources.Load<TMP_FontAsset>("Fonts & Materials/LiberationSans SDF");
 
         // Create Score Display
         GameObject scoreGo = new GameObject("ScoreText");
-        scoreGo.transform.position = new Vector3(-10f, 1f, 0); // Adjusted position further left
-        scoreTextMesh = scoreGo.AddComponent<TextMesh>();
-        scoreTextMesh.fontSize = 200; // Increased font size for clarity
-        scoreTextMesh.characterSize = 0.1f; // Use characterSize to scale
-        scoreTextMesh.anchor = TextAnchor.LowerLeft;
+        scoreGo.transform.position = new Vector3(-10f, 1f, 0);
+        scoreTextMesh = scoreGo.AddComponent<TextMeshPro>(); // Use TextMeshPro
+        scoreTextMesh.font = fontAsset; // Assign font
+        scoreTextMesh.fontSize = 5;
+        scoreTextMesh.alignment = TextAlignmentOptions.BottomLeft; // Use TMP alignment
+        scoreTextMesh.GetComponent<RectTransform>().sizeDelta = new Vector2(5, 5); // Set rect size
 
-        // Reset Score and Speed
         score = 0;
         speedLevel = 0;
         currentFallTime = baseFallTime;
         UpdateScoreDisplay();
 
-        // --- Game Mode Specific Setup ---
         tetrominoQueue.Clear();
         if (selectedDifficulty == GameDifficulty.Easy)
         {
-            // Pre-populate queue for Easy mode
-            currentFallTime = 1.2f; // Slower speed for easy mode
+            currentFallTime = 1.2f;
             for(int i = 0; i < 3; i++)
             {
                 tetrominoQueue.Enqueue(tetrominoPrefabs[Random.Range(0, tetrominoPrefabs.Length)]);
@@ -189,7 +191,6 @@ public class GameManager : MonoBehaviour
             {
                 if (hit.collider.name == "RestartButton")
                 {
-                    // Restart with the same difficulty
                     StartGame(selectedDifficulty);
                 }
             }
@@ -199,25 +200,18 @@ public class GameManager : MonoBehaviour
     void DrawBorder()
     {
         GameObject borderHolder = new GameObject("Border");
-        // Floor
         for (int x = -1; x <= width; x++)
         {
             Instantiate(borderBlockPrefab, new Vector3(x, -1, 0), Quaternion.identity, borderHolder.transform);
         }
-
-        // Left Wall
         for (int y = 0; y < height; y++)
         {
             Instantiate(borderBlockPrefab, new Vector3(-1, y, 0), Quaternion.identity, borderHolder.transform);
         }
-
-        // Right Wall
         for (int y = 0; y < height; y++)
         {
             Instantiate(borderBlockPrefab, new Vector3(width, y, 0), Quaternion.identity, borderHolder.transform);
         }
-
-        // Top Wall
         for (int x = -1; x <= width; x++)
         {
             Instantiate(borderBlockPrefab, new Vector3(x, height, 0), Quaternion.identity, borderHolder.transform);
@@ -230,18 +224,14 @@ public class GameManager : MonoBehaviour
         {
             Destroy(nextQueueHolder);
         }
-
         nextQueueHolder = new GameObject("NextQueue");
         nextQueueHolder.transform.position = new Vector3(width + 3, height - 2, 0);
-
-        // Display the next 2 pieces
         GameObject[] nextPieces = tetrominoQueue.ToArray();
         for (int i = 0; i < 2 && i < nextPieces.Length; i++)
         {
             GameObject piece = Instantiate(nextPieces[i], nextQueueHolder.transform);
             piece.transform.localPosition = new Vector3(0, -i * 4, 0);
             piece.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-            // Disable the script on the preview pieces
             if(piece.GetComponent<Tetromino>() != null)
             {
                 piece.GetComponent<Tetromino>().enabled = false;
@@ -255,23 +245,17 @@ public class GameManager : MonoBehaviour
         {
             return;
         }
-
         GameObject nextTetrominoPrefab;
-
         if (selectedDifficulty == GameDifficulty.Easy)
         {
-            // Dequeue the next piece and enqueue a new one
             nextTetrominoPrefab = tetrominoQueue.Dequeue();
             tetrominoQueue.Enqueue(tetrominoPrefabs[Random.Range(0, tetrominoPrefabs.Length)]);
             UpdateNextQueueDisplay();
         }
-        else // Hard mode
+        else
         {
-            // Original random spawning
             nextTetrominoPrefab = tetrominoPrefabs[Random.Range(0, tetrominoPrefabs.Length)];
         }
-
-        // Spawn the chosen tetromino
         Instantiate(nextTetrominoPrefab,
                     new Vector3(width / 2, height + 2, 0),
                     Quaternion.identity);
@@ -281,50 +265,50 @@ public class GameManager : MonoBehaviour
     {
         gameState = GameState.GameOver;
         Debug.Log("GAME OVER");
-        Camera.main.backgroundColor = Color.black; // Reset background to black on game over;
+        Camera.main.backgroundColor = Color.black;
 
-        // Clean up next queue display on game over
         if (nextQueueHolder) Destroy(nextQueueHolder);
+        
+        TMP_FontAsset fontAsset = Resources.Load<TMP_FontAsset>("Fonts & Materials/LiberationSans SDF");
 
-        // --- Create a background/shadow text to make it look bolder ---
+        // --- Shadow Text ---
         GameObject shadowGo = new GameObject("GameOverText_Shadow");
-        shadowGo.transform.position = new Vector3(width / 2 + 0.05f, height / 2 - 0.05f, -0.9f); // Offset and slightly behind
-        TextMesh shadowTm = shadowGo.AddComponent<TextMesh>();
+        shadowGo.transform.position = new Vector3(width / 2 + 0.05f, height / 2 - 0.05f, -0.9f);
+        TextMeshPro shadowTm = shadowGo.AddComponent<TextMeshPro>();
+        shadowTm.font = fontAsset;
         shadowTm.text = "GAME OVER";
-        shadowTm.fontSize = 240; // Increased font size
-        shadowTm.characterSize = 0.1f; // Use characterSize to scale
-        shadowTm.color = Color.black; // Shadow color
-        shadowTm.anchor = TextAnchor.MiddleCenter;
-        shadowTm.alignment = TextAlignment.Center;
-        
-        // --- Create the main foreground text ---
+        shadowTm.fontSize = 8;
+        shadowTm.color = Color.black;
+        shadowTm.alignment = TextAlignmentOptions.Center;
+        shadowTm.GetComponent<RectTransform>().sizeDelta = new Vector2(10, 2);
+
+        // --- Foreground Text ---
         GameObject go = new GameObject("GameOverText_FG");
-        go.transform.position = new Vector3(width / 2, height / 2, -1); // In front of shadow
-        TextMesh tm = go.AddComponent<TextMesh>();
+        go.transform.position = new Vector3(width / 2, height / 2, -1);
+        TextMeshPro tm = go.AddComponent<TextMeshPro>();
+        tm.font = fontAsset;
         tm.text = "GAME OVER";
-        tm.fontSize = 240; // Increased font size
-        tm.characterSize = 0.1f; // Use characterSize to scale
-        tm.color = new Color(0.85f, 0.2f, 0.2f); // A softer, less saturated red
-        tm.anchor = TextAnchor.MiddleCenter;
-        tm.alignment = TextAlignment.Center;
-        
-        // --- Create Restart Button ---
+        tm.fontSize = 8;
+        tm.color = new Color(0.85f, 0.2f, 0.2f);
+        tm.alignment = TextAlignmentOptions.Center;
+        tm.GetComponent<RectTransform>().sizeDelta = new Vector2(10, 2);
+
+        // --- Restart Button ---
         GameObject restartButtonGo = new GameObject("RestartButton");
         restartButtonGo.transform.position = new Vector3(width / 2, height / 2 - 3, -1);
-        TextMesh restartButtonTm = restartButtonGo.AddComponent<TextMesh>();
+        TextMeshPro restartButtonTm = restartButtonGo.AddComponent<TextMeshPro>();
+        restartButtonTm.font = fontAsset;
         restartButtonTm.text = "Restart";
-        restartButtonTm.fontSize = 300; // Increased font size
-        restartButtonTm.characterSize = 0.1f; // Use characterSize to scale
-        restartButtonTm.anchor = TextAnchor.MiddleCenter;
-        restartButtonTm.alignment = TextAlignment.Center;
+        restartButtonTm.fontSize = 8;
         restartButtonTm.color = Color.cyan;
+        restartButtonTm.alignment = TextAlignmentOptions.Center;
+        restartButtonTm.GetComponent<RectTransform>().sizeDelta = new Vector2(7, 2);
         BoxCollider bc = restartButtonGo.AddComponent<BoxCollider>();
-        bc.size = new Vector3(5, 2, 1); // Reverted to original size
+        bc.size = new Vector3(7, 2, 1);
     }
 
     public void CheckForLines()
     {
-        // Find all full lines
         List<int> fullLines = new List<int>();
         for (int y = 0; y < height; y++)
         {
@@ -333,20 +317,14 @@ public class GameManager : MonoBehaviour
                 fullLines.Add(y);
             }
         }
-
-        // If any lines were cleared
         if (fullLines.Count > 0)
         {
             AddScore(fullLines.Count);
             UpdateScoreDisplay();
-
-            // Delete the lines
             foreach (int y in fullLines)
             {
                 DeleteLine(y);
             }
-
-            // Collapse the grid
             for (int i = fullLines.Count - 1; i >= 0; i--)
             {
                 MoveLinesDown(fullLines[i]);
@@ -363,20 +341,11 @@ public class GameManager : MonoBehaviour
     {
         switch (lineCount)
         {
-            case 1:
-                score += 100;
-                break;
-            case 2:
-                score += 300;
-                break;
-            case 3:
-                score += 500;
-                break;
-            case 4:
-                score += 800;
-                break;
+            case 1: score += 100; break;
+            case 2: score += 300; break;
+            case 3: score += 500; break;
+            case 4: score += 800; break;
         }
-
         if (selectedDifficulty == GameDifficulty.Hard)
         {
             int newSpeedLevel = score / 1000;
@@ -400,10 +369,10 @@ public class GameManager : MonoBehaviour
         {
             if (grid[x, y] == null)
             {
-                return false; // Not full
+                return false;
             }
         }
-        return true; // Full line
+        return true;
     }
 
     void DeleteLine(int y)
@@ -417,15 +386,15 @@ public class GameManager : MonoBehaviour
 
     void MoveLinesDown(int y)
     {
-        for (int i = y; i < height; i++) // From the cleared line upwards
+        for (int i = y; i < height; i++)
         {
             for (int x = 0; x < width; x++)
             {
                 if (grid[x, i] != null)
                 {
-                    grid[x, i - 1] = grid[x, i]; // Move reference in grid
-                    grid[x, i - 1].position += new Vector3(0, -1, 0); // Move actual game object
-                    grid[x, i] = null; // Clear old position
+                    grid[x, i - 1] = grid[x, i];
+                    grid[x, i - 1].position += new Vector3(0, -1, 0);
+                    grid[x, i] = null;
                 }
             }
         }
