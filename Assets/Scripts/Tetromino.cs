@@ -3,6 +3,7 @@ using UnityEngine;
 public class Tetromino : MonoBehaviour
 {
     private float previousTime;
+    private GameManager gameManager; // Cached GameManager instance
 
     public float lockDelay = 0.5f;
     private float lockTime = 0;
@@ -11,6 +12,16 @@ public class Tetromino : MonoBehaviour
     public float dasSpeed = 0.1f;
     private float dasTimerLeft = 0f;
     private float dasTimerRight = 0f;
+
+    void Awake()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+        if (gameManager == null)
+        {
+            Debug.LogError("GameManager not found in scene!");
+            this.enabled = false; // Disable this script if GameManager is not found
+        }
+    }
 
     void Start()
     {

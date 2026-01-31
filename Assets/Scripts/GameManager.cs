@@ -53,9 +53,10 @@ public class GameManager : MonoBehaviour
         GameObject titleGo = new GameObject("Title");
         titleGo.transform.SetParent(mainMenuHolder.transform);
         titleGo.transform.position = new Vector3(width / 2, height / 2 + 4, 0);
+        titleGo.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f); // Scale down for high-res text
         TextMesh titleTm = titleGo.AddComponent<TextMesh>();
         titleTm.text = "Tetris84";
-        titleTm.fontSize = 40;
+        titleTm.fontSize = 400; // Increased font size for clarity
         titleTm.anchor = TextAnchor.MiddleCenter;
         titleTm.alignment = TextAlignment.Center;
         titleTm.color = Color.white;
@@ -64,27 +65,29 @@ public class GameManager : MonoBehaviour
         GameObject easyButtonGo = new GameObject("EasyButton");
         easyButtonGo.transform.SetParent(mainMenuHolder.transform);
         easyButtonGo.transform.position = new Vector3(width / 2, height / 2, 0);
+        easyButtonGo.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f); // Scale down for high-res text
         TextMesh easyButtonTm = easyButtonGo.AddComponent<TextMesh>();
         easyButtonTm.text = "EASY";
-        easyButtonTm.fontSize = 30;
+        easyButtonTm.fontSize = 300; // Increased font size for clarity
         easyButtonTm.anchor = TextAnchor.MiddleCenter;
         easyButtonTm.alignment = TextAlignment.Center;
         easyButtonTm.color = Color.cyan;
         BoxCollider easyBc = easyButtonGo.AddComponent<BoxCollider>();
-        easyBc.size = new Vector3(7, 2, 1);
+        easyBc.size = new Vector3(70, 20, 10); // Adjusted collider size
 
         // Hard Button
         GameObject hardButtonGo = new GameObject("HardButton");
         hardButtonGo.transform.SetParent(mainMenuHolder.transform);
         hardButtonGo.transform.position = new Vector3(width / 2, height / 2 - 3, 0);
+        hardButtonGo.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f); // Scale down for high-res text
         TextMesh hardButtonTm = hardButtonGo.AddComponent<TextMesh>();
         hardButtonTm.text = "HARD";
-        hardButtonTm.fontSize = 30;
+        hardButtonTm.fontSize = 300; // Increased font size for clarity
         hardButtonTm.anchor = TextAnchor.MiddleCenter;
         hardButtonTm.alignment = TextAlignment.Center;
         hardButtonTm.color = Color.red;
         BoxCollider hardBc = hardButtonGo.AddComponent<BoxCollider>();
-        hardBc.size = new Vector3(7, 2, 1);
+        hardBc.size = new Vector3(70, 20, 10); // Adjusted collider size
     }
 
     void StartGame(GameDifficulty difficulty)
@@ -127,8 +130,9 @@ public class GameManager : MonoBehaviour
         // Create Score Display
         GameObject scoreGo = new GameObject("ScoreText");
         scoreGo.transform.position = new Vector3(-10f, 1f, 0); // Adjusted position further left
+        scoreGo.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f); // Scale down for high-res text
         scoreTextMesh = scoreGo.AddComponent<TextMesh>();
-        scoreTextMesh.fontSize = 20;
+        scoreTextMesh.fontSize = 200; // Increased font size for clarity
         scoreTextMesh.anchor = TextAnchor.LowerLeft;
 
         // Reset Score and Speed
@@ -285,9 +289,10 @@ public class GameManager : MonoBehaviour
         // --- Create a background/shadow text to make it look bolder ---
         GameObject shadowGo = new GameObject("GameOverText_Shadow");
         shadowGo.transform.position = new Vector3(width / 2 + 0.05f, height / 2 - 0.05f, -0.9f); // Offset and slightly behind
+        shadowGo.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f); // Scale down for high-res text
         TextMesh shadowTm = shadowGo.AddComponent<TextMesh>();
         shadowTm.text = "GAME OVER";
-        shadowTm.fontSize = 24;
+        shadowTm.fontSize = 240; // Increased font size
         shadowTm.color = Color.black; // Shadow color
         shadowTm.anchor = TextAnchor.MiddleCenter;
         shadowTm.alignment = TextAlignment.Center;
@@ -295,9 +300,10 @@ public class GameManager : MonoBehaviour
         // --- Create the main foreground text ---
         GameObject go = new GameObject("GameOverText_FG");
         go.transform.position = new Vector3(width / 2, height / 2, -1); // In front of shadow
+        go.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f); // Scale down for high-res text
         TextMesh tm = go.AddComponent<TextMesh>();
         tm.text = "GAME OVER";
-        tm.fontSize = 24;
+        tm.fontSize = 240; // Increased font size
         tm.color = new Color(0.85f, 0.2f, 0.2f); // A softer, less saturated red
         tm.anchor = TextAnchor.MiddleCenter;
         tm.alignment = TextAlignment.Center;
@@ -305,14 +311,15 @@ public class GameManager : MonoBehaviour
         // --- Create Restart Button ---
         GameObject restartButtonGo = new GameObject("RestartButton");
         restartButtonGo.transform.position = new Vector3(width / 2, height / 2 - 3, -1);
+        restartButtonGo.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f); // Scale down for high-res text
         TextMesh restartButtonTm = restartButtonGo.AddComponent<TextMesh>();
         restartButtonTm.text = "Restart";
-        restartButtonTm.fontSize = 30;
+        restartButtonTm.fontSize = 300; // Increased font size
         restartButtonTm.anchor = TextAnchor.MiddleCenter;
         restartButtonTm.alignment = TextAlignment.Center;
         restartButtonTm.color = Color.cyan;
         BoxCollider bc = restartButtonGo.AddComponent<BoxCollider>();
-        bc.size = new Vector3(5, 2, 1);
+        bc.size = new Vector3(50, 20, 10); // Adjusted collider size
     }
 
     public void CheckForLines()
